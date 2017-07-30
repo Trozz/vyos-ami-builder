@@ -12,4 +12,7 @@ then
 fi
 
 export VPC_ID SUBNET_ID
-packer build -machine-readable packer.json
+packer build -machine-readable packer.json| tee packer.log
+awk -F, '$0 ~/artifact,0,id/ {print $6}' packer.log | \
+  sed -e 's/%!(PACKER_COMMA)/\n/g' | \
+  sed -e 's/^/    /g' -e 's/:/: /g'
